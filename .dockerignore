@@ -1,16 +1,38 @@
-.git
-.github
-.vscode
+# Visual Studio
+.vscode/
 
+# Scripts
+scripts/
 *.bat
 *.cmd
+*.ps1
+
+# Config files
+*.conf
+*.json
+
+# Images
+images/
+*.jpeg
+*.jpg
 *.png
+*.webp
 
+# Git
+.git/
 .gitignore
-.pre-commit-config*
 
-docker-compose*
-Dockerfile*
+# pre-commit
+.pre-commit-config.*
+.ruff_cache/
+
+# Docker
+.dockerignore
+docker-compose.*
+Dockerfile
+
+# Repo
+.github/
 LICENSE
 README.md
 SECURITY.md
