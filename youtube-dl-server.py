@@ -33,7 +33,9 @@ app_defaults = {
     "YDL_COOKIES_BROWSER": config("YDL_COOKIES_BROWSER", default=None),
     "YDL_UPDATE_TIME": config("YDL_UPDATE_TIME", cast=bool, default=True),
     "YDL_IGNORE_ERRORS": config("YDL_IGNORE_ERRORS", default=True),
-    "YDL_RESTRICT_FILENAMES": config("YDL_RESTRICT_FILENAMES", cast=bool, default=False),
+    "YDL_RESTRICT_FILENAMES": config(
+        "YDL_RESTRICT_FILENAMES", cast=bool, default=False
+    ),
     "YDL_GEO_BYPASS": config("YDL_GEO_BYPASS", cast=bool, default=False),
     "YDL_WRITE_THUMBNAIL": config("YDL_WRITE_THUMBNAIL", cast=bool, default=True),
     "YDL_THUMBNAIL_FORMAT": config("YDL_THUMBNAIL_FORMAT", default=None),
@@ -213,5 +215,5 @@ routes = [
 
 app = Starlette(debug=True, routes=routes)
 
-print("Updating youtube-dl to the newest version")
+print("Updating yt-dlp to the latest version . . . ")
 update()
