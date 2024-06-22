@@ -2,4 +2,4 @@
 
 ## Reporting a Vulnerability
 
-This service isn't intended to be exposed to the internet but if you find somehting that you think should be addressed, you can message me on twitter, [@manbearwiz](https://twitter.com/manbearwiz).
+This service isn't intended to be exposed to the internet but if you find something that you think should be addressed, you can [report a vulnerability](https://github.com/qx6ghqkz/youtube-dl-server/security/advisories/new).

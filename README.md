@@ -4,7 +4,7 @@
 
 # youtube-dl-server
 
-Very spartan Web and REST interface for downloading youtube videos onto a server. [`starlette`](https://github.com/encode/starlette) + [`yt-dlp`](https://github.com/yt-dlp/yt-dlp).
+Very spartan Web and REST interface for downloading YouTube videos onto a server. [`starlette`](https://github.com/encode/starlette) + [`yt-dlp`](https://github.com/yt-dlp/yt-dlp).
 
 ![screenshot][1]
 
@@ -12,10 +12,10 @@ Very spartan Web and REST interface for downloading youtube videos onto a server
 
 ### Docker CLI
 
-This example uses the docker run command to create the container to run the app. Here we also use host networking for simplicity. Also note the `-v` argument. This directory will be used to output the resulting videos.
+This example uses the `docker run` command to create the container to run the app. Here we also use host networking for simplicity. Also note the `-v` argument. This directory will be used to output the resulting videos.
 
 ```shell
-docker run -d --net="host" --name youtube-dl -v /home/core/youtube-dl:/youtube-dl qx6ghqkz/youtube-dl-server
+docker run -d --net="host" --name youtube-dl-server -v /home/core/youtube-dl:/youtube-dl qx6ghqkz/youtube-dl-server:latest
 ```
 
 ### Docker Compose
@@ -23,17 +23,17 @@ docker run -d --net="host" --name youtube-dl -v /home/core/youtube-dl:/youtube-d
 This is an example service definition that could be put in `docker-compose.yml`. This service uses a VPN client container for its networking.
 
 ```yml
-  youtube-dl:
-    image: "qx6ghqkz/youtube-dl-server"
-    network_mode: "service:vpn"
+  youtube-dl-server:
+    image: qx6ghqkz/youtube-dl-server:latest
+    network_mode: container:vpn
     volumes:
       - /home/core/youtube-dl:/youtube-dl
-    restart: always
+    restart: unless-stopped
 ```
 
 ### Python
 
-If you have python ^3.6.0 installed in your PATH you can simply run like this, providing optional environment variable overrides inline.
+If you have Python ^3.6.0 installed in your PATH you can simply run like this, providing optional environment variable overrides inline.
 
 ```shell
 YDL_UPDATE_TIME=False python3 -m uvicorn youtube-dl-server:app --port 8123
@@ -41,9 +41,9 @@ YDL_UPDATE_TIME=False python3 -m uvicorn youtube-dl-server:app --port 8123
 
 In this example, `YDL_UPDATE_TIME=False` is the same as the command line option `--no-mtime`.
 
-### Environment variables
+### Environment Variables
 
-Environment variables can be set to change different settings, for example using docker run.
+Environment variables can be set to change different settings, for example using `docker run`.
 
 ```shell
 docker run -d \
@@ -67,7 +67,7 @@ docker run -d \
   -e YDL_SUBTITLES_LANGS="en.*,ja" \
   -e YDL_EMBED_METADATA=True \
   --restart unless-stopped \
-  qx6ghqkz/youtube-dl-server
+  qx6ghqkz/youtube-dl-server:latest
 ```
 Environment variables can also be placed in a `.env ` file when using `docker compose up`.
 
@@ -95,7 +95,7 @@ Environment variables can also be placed in a `.env ` file when using `docker co
 | YDL_SUBTITLES_LANGS       | String         | `"all"`                                        | Can specify multiple, e.g. `"en.*,ja"`               |
 | YDL_EMBED_METADATA        | Boolean        | `False`                                        |                                                      |
 
-For more information on these options, see the [yt-dlp docs](https://github.com/yt-dlp/yt-dlp?tab=readme-ov-file#usage-and-options) and [YouTubeDL object parameters](https://github.com/yt-dlp/yt-dlp/blob/12b248ce60be1aa1362edd839d915bba70dbee4b/yt_dlp/YoutubeDL.py#L176-L565).
+For more information on these options, see the [yt-dlp docs](https://github.com/yt-dlp/yt-dlp#usage-and-options) and [YouTubeDL object parameters](https://github.com/yt-dlp/yt-dlp/blob/12b248ce60be1aa1362edd839d915bba70dbee4b/yt_dlp/YoutubeDL.py#L176-L565).
 
 ## Usage
 
@@ -127,7 +127,7 @@ fetch(`http://${host}:8080/youtube-dl/q`, {
 
 #### Bookmarklet
 
-Add the following bookmarklet to your bookmark bar so you can conviently send the current page url to your youtube-dl-server instance.
+Add the following bookmarklet to your bookmark bar so you can conveniently send the current page URL to your youtube-dl-server instance.
 
 ```javascript
 javascript:!function(){fetch("http://${host}:8080/youtube-dl/q",{body:new URLSearchParams({url:window.location.href,format:"bestvideo"}),method:"POST"})}();
@@ -135,8 +135,8 @@ javascript:!function(){fetch("http://${host}:8080/youtube-dl/q",{body:new URLSea
 
 ## Implementation
 
-The server uses [`starlette`](https://github.com/encode/starlette) for the web framework and [`youtube-dl`](https://github.com/rg3/youtube-dl) to handle the downloading. The integration with youtube-dl makes use of their [python api](https://github.com/rg3/youtube-dl#embedding-youtube-dl).
+The server uses [`starlette`](https://github.com/encode/starlette) for the web framework and [`yt-dlp`](https://github.com/yt-dlp/yt-dlp) to handle the downloading. The integration with yt-dlp makes use of their [Python API](https://github.com/yt-dlp/yt-dlp#embedding-yt-dlp).
 
-This docker image is based on [`python:alpine`](https://registry.hub.docker.com/_/python/) and consequently [`alpine:3.8`](https://hub.docker.com/_/alpine/).
+The Docker image is based on [`python:alpine`](https://registry.hub.docker.com/_/python/) and consequently [`alpine`](https://hub.docker.com/_/alpine/).
 
 [1]:youtube-dl-server.png
