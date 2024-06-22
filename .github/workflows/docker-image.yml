@@ -4,11 +4,21 @@ on:
   push:
     branches:
       - 'main'
+    paths:
+      - 'templates/**'
+      - '**.py'
+      - 'Dockerfile'
+      - 'requirements.txt'
     tags:
       - 'v*'
   pull_request:
     branches:
       - 'main'
+    paths:
+      - 'templates/**'
+      - '**.py'
+      - 'Dockerfile'
+      - 'requirements.txt'
     types:
       - closed
 
