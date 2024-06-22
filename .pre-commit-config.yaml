@@ -1,15 +1,18 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.2.0
+    rev: v4.6.0
     hooks:
       - id: check-added-large-files
-      - id: check-toml
+      - id: check-ast
+      - id: check-case-conflict
       - id: check-yaml
+      - id: detect-private-key
       - id: end-of-file-fixer
+      - id: requirements-txt-fixer
       - id: trailing-whitespace
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.3.4
+    rev: v0.4.10
     hooks:
       - id: ruff
-        args: [--fix]
+        args: [--fix-only]
       - id: ruff-format
