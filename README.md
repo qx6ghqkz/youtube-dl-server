@@ -6,7 +6,7 @@
 
 Very spartan Web and REST interface for downloading YouTube videos onto a server. [`starlette`](https://github.com/encode/starlette) + [`yt-dlp`](https://github.com/yt-dlp/yt-dlp).
 
-![screenshot][1]
+![screenshot](images/youtube-dl-server.png)
 
 ## Running
 
@@ -138,5 +138,3 @@ javascript:!function(){fetch("http://${host}:8080/youtube-dl/q",{body:new URLSea
 The server uses [`starlette`](https://github.com/encode/starlette) for the web framework and [`yt-dlp`](https://github.com/yt-dlp/yt-dlp) to handle the downloading. The integration with yt-dlp makes use of their [Python API](https://github.com/yt-dlp/yt-dlp#embedding-yt-dlp).
 
 The Docker image is based on [`python:alpine`](https://registry.hub.docker.com/_/python/) and consequently [`alpine`](https://hub.docker.com/_/alpine/).
-
-[1]:youtube-dl-server.png
