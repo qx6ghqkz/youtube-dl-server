@@ -6,11 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Web frontend for yt-dlp" />
 
-    <link rel="apple-touch-icon" sizes="180x180" href="../icons/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="../icons/favicon-16x16.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32x32.png" />
-    <link rel="icon" type="image/x-icon" href="../icons/favicon.ico" />
-    <link rel="manifest" href="../icons/site.webmanifest" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('icons', path='/apple-touch-icon.png') }}" />
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('icons', path='/favicon-16x16.png') }}" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('icons', path='/favicon-32x32.png') }}" />
+    <link rel="icon" type="image/x-icon" href="{{ url_for('icons', path='/favicon.ico') }}" />
+    <link rel="manifest" href="{{ url_for('icons', path='/site.webmanifest') }}" />
 
     <link
       rel="stylesheet"

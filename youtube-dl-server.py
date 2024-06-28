@@ -5,8 +5,9 @@ from starlette.status import HTTP_303_SEE_OTHER
 from starlette.applications import Starlette
 from starlette.config import Config
 from starlette.responses import JSONResponse, RedirectResponse
-from starlette.routing import Route
+from starlette.routing import Route, Mount
 from starlette.templating import Jinja2Templates
+from starlette.staticfiles import StaticFiles
 from starlette.background import BackgroundTask
 
 from yt_dlp import YoutubeDL, version
@@ -211,6 +212,7 @@ routes = [
     Route("/youtube-dl", endpoint=dl_queue_list),
     Route("/youtube-dl/q", endpoint=q_put, methods=["POST"]),
     Route("/youtube-dl/update", endpoint=update_route, methods=["PUT"]),
+    Mount("/icons", StaticFiles(directory="icons"), name="icons"),
 ]
 
 app = Starlette(debug=True, routes=routes)
