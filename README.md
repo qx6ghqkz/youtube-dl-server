@@ -6,6 +6,9 @@
 
 Very spartan Web and REST interface for downloading YouTube videos onto a server. [`starlette`](https://github.com/encode/starlette) + [`yt-dlp`](https://github.com/yt-dlp/yt-dlp).
 
+> [!IMPORTANT]
+> This web server is no longer being actively developed in favour of [`gallery-dl-server`](https://github.com/qx6ghqkz/gallery-dl-server), which integrates yt-dlp and has much greater capabilities and support for configuration options.
+
 ![screenshot](images/youtube-dl-server.png)
 
 ## Running
