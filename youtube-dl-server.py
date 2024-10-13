@@ -135,7 +135,7 @@ def get_ydl_options(request_options):
             }
         )
 
-    if ydl_vars["YDL_WRITE_THUMBNAIL"] == True:
+    if ydl_vars["YDL_WRITE_THUMBNAIL"] is True:
         postprocessors.append(
             {
                 "key": "EmbedThumbnail",
@@ -152,7 +152,7 @@ def get_ydl_options(request_options):
             }
         )
 
-    if ydl_vars["YDL_WRITE_SUBTITLES"] == True:
+    if ydl_vars["YDL_WRITE_SUBTITLES"] is True:
         postprocessors.append(
             {
                 "key": "FFmpegEmbedSubtitle",
@@ -169,7 +169,7 @@ def get_ydl_options(request_options):
             }
         )
 
-    if ydl_vars["YDL_EMBED_METADATA"] == True:
+    if ydl_vars["YDL_EMBED_METADATA"] is True:
         postprocessors.append(
             {
                 "key": "FFmpegMetadata",
@@ -217,5 +217,5 @@ routes = [
 
 app = Starlette(debug=True, routes=routes)
 
-print("Updating yt-dlp to the latest version . . . ")
-update()
+# print("Updating yt-dlp to the latest version . . . ")
+# update()
