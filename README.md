@@ -15,10 +15,17 @@ Very spartan Web and REST interface for downloading YouTube videos onto a server
 
 ### Docker CLI
 
-This example uses the `docker run` command to create the container to run the app. Here we also use host networking for simplicity. Also note the `-v` argument. This directory will be used to output the resulting videos.
+This example uses the `docker run` command to create the container to run the app. We run the app with our host user `UID:GID` and on host port `7080`. Also note the `-v` arguments. The first directory can be used to store data files and the second directory will be used to output the downloaded videos.
 
 ```shell
-docker run -d --net="host" --name youtube-dl-server -v /home/core/youtube-dl:/youtube-dl qx6ghqkz/youtube-dl-server:latest
+docker run -d \
+  --name youtube-dl \
+  --user 1000:1000 \
+  -p 7080:8080 \
+  -v "/path/to/data:/data" \
+  -v "/path/to/downloads:/youtube-dl" \
+  --restart unless-stopped \
+qx6ghqkz/youtube-dl-server:latest
 ```
 
 ### Docker Compose
@@ -26,53 +33,71 @@ docker run -d --net="host" --name youtube-dl-server -v /home/core/youtube-dl:/yo
 This is an example service definition that could be put in `docker-compose.yml`. This service uses a VPN client container for its networking.
 
 ```yml
-  youtube-dl-server:
+  youtube-dl:
     image: qx6ghqkz/youtube-dl-server:latest
+    container_name: youtube-dl
+    user: 1000:1000
     network_mode: container:vpn
+    # ports:
+    #   - 7080:8080
     volumes:
-      - /home/core/youtube-dl:/youtube-dl
+      - "/path/to/data:/data"
+      - "/path/to/downloads:/youtube-dl"
     restart: unless-stopped
 ```
 
 ### Python
 
-If you have Python ^3.6.0 installed in your PATH you can simply run like this, providing optional environment variable overrides inline.
+If you have Python ^3.6.0 installed in your PATH you can simply run like so, providing optional environment variable overrides inline. The `-u` flag is necessary to capture the output immediately.
 
 ```shell
-YDL_UPDATE_TIME=False python3 -m uvicorn youtube-dl-server:app --port 8123
+YDL_UPDATE_TIME=False python3 -u -m uvicorn youtube-dl-server:app --port 8123
 ```
 
 In this example, `YDL_UPDATE_TIME=False` is the same as the command line option `--no-mtime`.
 
+### Ports
+
+For publishing ports, the syntax is `HOST_PORT:CONTAINER_PORT`. The `HOST_PORT` can be set to any valid port number. The internal `CONTAINER_PORT` must be `8080` by default, but can be set to a different value using the `CONTAINER_PORT` environment variable. Specify environment variables using the `-e` option on the command line or in Docker Compose:
+
+```yml
+  youtube-dl:
+    image: qx6ghqkz/youtube-dl-server:latest
+    container_name: youtube-dl
+    user: 1000:1000
+    ports:
+      - 7080:80
+    environment:
+      - CONTAINER_PORT=80
+    volumes:
+      - "/path/to/data:/data"
+      - "/path/to/downloads:/youtube-dl"
+    restart: unless-stopped
+```
+
 ### Environment Variables
 
-Environment variables can be set to change different settings, for example using `docker run`.
+Environment variables can be set to change different settings. You can use the `-e` option with `docker run` or under `environment:` using a Docker Compose file, but it is best to use a separate `.env` file to list environment variables:
 
 ```shell
-docker run -d \
-  --name youtube-dl-server \
-  --user 1000:1000 \
-  -p 8080:8080 \
-  -v /path/to/data:/data \
-  --mount type=bind,source=/path/to/videos,target=/youtube-dl \
-  -e YDL_FORMAT="bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio/best" \
-  -e YDL_MERGE_OUTPUT_FORMAT="mp4/mkv" \
-  -e YDL_OUTPUT_TEMPLATE="/youtube-dl/%(title).200s [%(id)s].%(ext)s" \
-  -e YDL_NO_PLAYLIST=True \
-  -e YDL_ARCHIVE_FILE="/data/archive.txt" \
-  -e YDL_COOKIES_FILE="/data/cookies.txt" \
-  -e YDL_IGNORE_ERRORS=True \
-  -e YDL_WRITE_THUMBNAIL=True \
-  -e YDL_THUMBNAIL_FORMAT="png/jpg" \
-  -e YDL_WRITE_SUBTITLES=True \
-  -e YDL_SUBTITLES_FORMAT="srt/vtt/best" \
-  -e YDL_CONVERT_SUBTITLES="srt" \
-  -e YDL_SUBTITLES_LANGS="en.*,ja" \
-  -e YDL_EMBED_METADATA=True \
-  --restart unless-stopped \
-  qx6ghqkz/youtube-dl-server:latest
+YDL_FORMAT=bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio/best
+YDL_MERGE_OUTPUT_FORMAT=mp4/mkv
+YDL_OUTPUT_TEMPLATE=/youtube-dl/%(title).200s [%(id)s].%(ext)s
+YDL_NO_PLAYLIST=True
+YDL_ARCHIVE_FILE=/data/archive.txt
+YDL_COOKIES_FILE=/data/cookies.txt
+YDL_IGNORE_ERRORS=True
+YDL_WRITE_THUMBNAIL=True
+YDL_THUMBNAIL_FORMAT=png/jpg
+YDL_WRITE_SUBTITLES=True
+YDL_SUBTITLES_FORMAT=srt/vtt/best
+YDL_CONVERT_SUBTITLES=srt
+YDL_SUBTITLES_LANGS=en.*,ja
+YDL_EMBED_METADATA=True
 ```
-Environment variables can also be placed in a `.env ` file when using `docker compose up`.
+The format is one environment variable per line with no quotation marks (these are only needed when specifying environment variables on the command line or in a `docker-compose.yml` file).
+
+Specify the relative path to the `.env` file with `--env-file <path>` using `docker run` or `env_file: <path>` if using Docker Compose.
 
 | Environment Variable      | Type           | Default Value                                  | Notes                                                |
 | ------------------------- | -------------- |----------------------------------------------- | ---------------------------------------------------- |
@@ -108,18 +133,18 @@ Downloads can be triggered by supplying the `{{url}}` of the requested video thr
 
 #### HTML
 
-Just navigate to `http://{{host}}:8080/youtube-dl` and enter the requested `{{url}}`.
+Just navigate to `http://{{host}}:7080/youtube-dl` and enter the requested `{{url}}`.
 
 #### Curl
 
 ```shell
-curl -X POST --data-urlencode "url={{url}}" http://{{host}}:8080/youtube-dl/q
+curl -X POST --data-urlencode "url={{url}}" http://{{host}}:7080/youtube-dl/q
 ```
 
 #### Fetch
 
 ```javascript
-fetch(`http://${host}:8080/youtube-dl/q`, {
+fetch(`http://${host}:7080/youtube-dl/q`, {
   method: "POST",
   body: new URLSearchParams({
     url: url,
@@ -133,7 +158,7 @@ fetch(`http://${host}:8080/youtube-dl/q`, {
 Add the following bookmarklet to your bookmark bar so you can conveniently send the current page URL to your youtube-dl-server instance.
 
 ```javascript
-javascript:!function(){fetch("http://${host}:8080/youtube-dl/q",{body:new URLSearchParams({url:window.location.href,format:"bestvideo"}),method:"POST"})}();
+javascript:!function(){fetch("http://${host}:7080/youtube-dl/q",{body:new URLSearchParams({url:window.location.href,format:"bestvideo"}),method:"POST"})}();
 ```
 
 ## Implementation
